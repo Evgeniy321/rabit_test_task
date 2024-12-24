@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Jenssegers\Agent\Agent;
 
 class MessageController extends Controller
 {
@@ -18,18 +19,24 @@ class MessageController extends Controller
         return view("messages.create");
     }
     public function store(Request $request){
-        $user = Auth::user();
+        $agent = new Agent();
         $data = $request->validate([
             'text' => 'string|required',
+            'name' => 'string|required',
+            'email' => 'email|required',
 
         ]);
-        $message = Message::create($data);
-        if(isset($user)){
-            $message->user_id = $user->id;
-        }else{
-            $message->user_id = 1;
-        }
-        
+        //dd($request->getClientIp(), $agent->browser());
+        $user = User::firstOrCreate([
+            'name'=> $data['name'],
+            'email'=> $data['email'],
+            'ip' => $request->getClientIp(),
+            'browser' => $agent->browser()
+        ]);
+        $message = Message::create([
+            'text' => $data['text'],
+            'user_id' => $user->id
+        ]);
         return redirect()->route('index');
 
     }
