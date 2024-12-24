@@ -11,12 +11,18 @@
                 </th>
                 <th>
                     email
+                    <a href="{{ route('index', ['sort_by' => 'email', 'sort_dir' => 'asc']) }}">&darr;</a>
+                    <a href="{{ route('index', ['sort_by' => 'email', 'sort_dir' => 'desc']) }}">&uarr;</a>
                 </th>
                 <th>
                     username
+                    <a href="{{ route('index', ['sort_by' => 'name', 'sort_dir' => 'asc']) }}">&darr;</a>
+                    <a href="{{ route('index', ['sort_by' => 'name', 'sort_dir' => 'desc']) }}">&uarr;</a>
                 </th>
                 <th>
-                    updated date
+                    craeated date
+                    <a href="{{ route('index', ['sort_by' => 'created_at', 'sort_dir' => 'asc']) }}">&darr;</a>
+                    <a href="{{ route('index', ['sort_by' => 'created_at', 'sort_dir' => 'desc']) }}">&uarr;</a>
                 </th>
             </tr>
             @foreach ($messages as $message)
@@ -34,7 +40,7 @@
                         {{ $message->user->name }}
                     </td>
                     <td>
-                        {{ $message->updated_at }}
+                        {{ $message->created_at }}
                     </td>
                 </tr>
             @endforeach

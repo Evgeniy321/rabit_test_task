@@ -11,8 +11,25 @@ use Jenssegers\Agent\Agent;
 
 class MessageController extends Controller
 {
-    public function index(){
-        $messages = Message::paginate(5);
+    public function index(Request $request){
+        $allowedColumns = ['name', 'email', 'created_at'];
+        $allowedDirections = ['asc', 'desc']; 
+        
+        $sortColumn = in_array($request->input('sort_by'), $allowedColumns) 
+                    ? $request->input('sort_by') 
+                    : 'created_at';
+
+        $sortDirection = in_array($request->input('sort_dir'), $allowedDirections) 
+                        ? $request->input('sort_dir') 
+                        : 'asc';
+        if($sortColumn == 'created_at'){
+            $messages = Message::orderBy($sortColumn, $sortDirection)->paginate(5);
+        }else{
+            $messages = Message::join('users', 'messages.user_id', '=', 'users.id')
+                    ->orderBy('users.'.$sortColumn, $sortDirection)
+                    ->select('messages.*') 
+                    ->paginate(5);
+        }
         return view("messages.index",compact("messages"));
     }
     public function create(){
